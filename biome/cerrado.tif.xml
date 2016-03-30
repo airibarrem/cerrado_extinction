@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{C28AC326-CACE-4A57-81B8-54C84FF5725B}</MetaID><CreaDate>20160323</CreaDate><CreaTime>15525300</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Conversion Tools.tbx\PolygonToRaster" Date="20160323" Time="155253">PolygonToRaster Cerrado FID C:\Users\Alvaro\Documents\IIS_PROJECTS\cerrado_extinction\biome\cerrado.tif CELL_CENTER NONE 0.074</Process></lineage></DataProperties></Esri></metadata>

@@ -1,0 +1,53 @@
+<PAMDataset>
+  <Metadata />
+  <Metadata domain="Esri">
+    <MDI key="PyramidResamplingType">NEAREST</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <Description>layer_0</Description>
+    <ColorInterp>Palette</ColorInterp>
+    <CategoryNames>
+      <Category>__class_0</Category>
+      <Category>agua</Category>
+      <Category>urbano</Category>
+      <Category>pastagem</Category>
+      <Category>pastagem_em_AP</Category>
+      <Category>savanas</Category>
+      <Category>savanas_em_AP</Category>
+      <Category>florestas</Category>
+      <Category>florestas_em_AP</Category>
+      <Category>__class_9</Category>
+      <Category>__class_10</Category>
+      <Category>soja</Category>
+      <Category>cana_de_acucar</Category>
+      <Category>milho</Category>
+      <Category>algodao</Category>
+      <Category>arroz</Category>
+      <Category>trigo</Category>
+      <Category>feijao</Category>
+      <Category>cafe_arabica</Category>
+      <Category>cafe_robusta</Category>
+      <Category>laranja</Category>
+      <Category>mandioca</Category>
+      <Category>banana</Category>
+      <Category>cacau</Category>
+      <Category>fumo</Category>
+      <Category>milho_2s</Category>
+      <Category>feijao_2s</Category>
+      <Category>__class_27</Category>
+      <Category>__class_28</Category>
+      <Category>__class_29</Category>
+      <Category>floresta_plantada</Category>
+      <Category>__class_31</Category>
+      <Category>__class_32</Category>
+      <Category>__class_33</Category>
+      <Category>__class_34</Category>
+      <Category>soja_milho_safrinha</Category>
+      <Category>soja_trigo</Category>
+      <Category>milho_trigo</Category>
+      <Category>soja_feijao</Category>
+      <Category>milho_feijao</Category>
+      <Category>feijao_feijao</Category>
+    </CategoryNames>
+  </PAMRasterBand>
+</PAMDataset>
