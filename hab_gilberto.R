@@ -88,33 +88,37 @@ nat.bau = nat.bau + bgd
 
 
 # Applying intersect.raster and cond.area to all sp.dist files
-sfInit(parallel = T, cpus = 3, type = 'SOCK')
-  sfExportAll()
-  sfLibrary(raster)
-  # sp. potential area maps today
-  pot.maps = sfLapply(paste0('./Flora_Cerrado/',sp.files),rcompose,bgd)
-  # sp. habitats today
-  hab.maps = sfLapply(paste0('./Flora_Cerrado/',sp.files),intersect.raster,nat.now,bgd)
-  #sp. habitats under future LUC
-  bau.maps = sfLapply(paste0('./Flora_Cerrado/',sp.files),intersect.raster,nat.bau,bgd)
-  # List of all the maps for today
-  maps.list = c(pot.maps,hab.maps,bau.maps)
-  # List of the areas (in ha) corresponding to the list of maps above
-  pot.areas = sfLapply(pot.maps,function(x){cond.area(nat.now,x)})
-  hab.areas = sfLapply(hab.maps,function(x){cond.area(nat.now,x)})
-  bau.areas = sfLapply(bau.maps,function(x){cond.area(nat.bau,x)})
+sfInit(parallel = T, cpus = 7, type = 'SOCK')
+sfExportAll()
+sfLibrary(raster)
+# sp. potential area maps today
+pot.maps = sfLapply(paste0('./Flora_Cerrado/',sp.files),rcompose,bgd)
+# sp. habitats today
+hab.maps = sfLapply(paste0('./Flora_Cerrado/',sp.files),intersect.raster,nat.now,bgd)
+#sp. habitats under future LUC
+bau.maps = sfLapply(paste0('./Flora_Cerrado/',sp.files),intersect.raster,nat.bau,bgd)
+# List of all the maps for today
+maps.list = c(pot.maps,hab.maps,bau.maps)
+# List of the areas (in ha) corresponding to the list of maps above
+pot.areas = sfLapply(pot.maps,function(x){cond.area(nat.now,x)})
+hab.areas = sfLapply(hab.maps,function(x){cond.area(nat.now,x)})
+bau.areas = sfLapply(bau.maps,function(x){cond.area(nat.bau,x)})
 sfStop()
 
 # Computing area data.frames
-now.df = data.frame(Sp=sub("_",' ',,sp.files))
-now.df$Pot_Area = pot.areas
-now.df$Hab_Area = hab.areas
-now.df$BAU_Area = bau.areas
+now.df = data.frame(Sp=sub("_",' ',sub('.asc','',sp.files)))
+now.df$Pot_Area = as.numeric(pot.areas)
+now.df$Hab_Area = as.numeric(hab.areas)
+now.df$BAU_Area = as.numeric(bau.areas)
 now.df = now.df[order(now.df$Sp),]
 
-#teste.df = now.df
-#teste.df[,3:6] = now.df[,3:6] / now.df[,2]
-#teste.df[,7] =  now.df[,7] / now.df[,6]
+teste.df = now.df
+teste.df[,3:4] = now.df[,3:4] / as.numeric(now.df[,2])
+
 
 # Outputting area data.frames
 write.csv(now.df, file='Flora_BRABIOM')
+write.csv2(now.df, file='Flora_BRABIOM_2')
+
+write.csv(teste.df, file='Flora_BRABIOM_perc')
+write.csv2(teste.df, file='Flora_BRABIOM_perc_2')
