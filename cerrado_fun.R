@@ -8,8 +8,8 @@ rcompose = function(x, bgx){
   # read input raster, if x is filename
   if (is.character(x)){x = raster(x)}
   # projects input raster into background raster
-  if(is.na(crs(x))) {crs(x)=crs(bgx)}
-  x = projectRaster(x,bgx,method='ngb')
+  if (is.na(crs(x))) {crs(x)=crs(bgx)}
+  if (crs(x) == crs(bgx)) {x=resample(x,bgx,method='ngb')} else {x=projectRaster(x,bgx,method='ngb')}
   # remove NA values from input raster
   x[is.na(x)]=0
   # mask input raster using the background one

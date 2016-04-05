@@ -89,8 +89,8 @@ OA.now = rcompose('./LU/uso_da_terra_culturas2safra.tif',bgd)
 OA.bau = rcompose('./LU/Brasil2050.tif',bgd)
 
 # native vegetation mask (according to classes in original land-use rasters)
-OA.nat.now = (OA.now %in% c(6,7,8)) + bgd
-OA.nat.bau = (OA.bau %in% c(6,7,8)) + bgd
+OA.nat.now = (OA.now %in% c(5,6,7,8)) + bgd
+OA.nat.bau = (OA.bau %in% c(5,6,7,8)) + bgd
 
 
 ###
