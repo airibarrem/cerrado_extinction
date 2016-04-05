@@ -8,7 +8,8 @@ rcompose = function(x, bgx){
   # read input raster, if x is filename
   if (is.character(x)){x = raster(x)}
   # projects input raster into background raster
-  if(!is.na(crs(x))){x = projectRaster(x,bgx,method='ngb')}
+  if(is.na(crs(x))) {crs(x)=crs(bgx)}
+  x = projectRaster(x,bgx,method='ngb')
   # remove NA values from input raster
   x[is.na(x)]=0
   # mask input raster using the background one
@@ -39,7 +40,7 @@ intersect.raster = function(x, y, bgx){
   return(rcompose(x*y,bgx))}
 
 # Computes habitat rasters and area (in ha)
-hab.calc = function(sp.filenames, nat.now, nat.bau, binary.px=T,
+hab.calc = function(sp.filenames, nat.now, nat.bau, binary.px=T, area.only=F,
                     sp.dir=getwd(), string.rem='.asc', CSV.name = 'hab_areas',
                     print.CSV=T, sf.on=T, cores=11){
   # INPUTS:
@@ -49,6 +50,7 @@ hab.calc = function(sp.filenames, nat.now, nat.bau, binary.px=T,
   # sp.dir          character line containing filepath to sp.files
   # string.rem      string to be removed from sp. filenames in final print
   # binary.px       px in nat. rasters: 0/1 presence (T), 0-1 percent cover (F)
+  # area.only       If T, returns only the aggregated area data.frame
   # print.CSV       logical. prints csv with areas in ha when T
   # CSV.name        filename for the CSV to be printed
   # sf.on           logical. uses snowfall parallel computing when T
@@ -56,7 +58,8 @@ hab.calc = function(sp.filenames, nat.now, nat.bau, binary.px=T,
   #
   # Applying intersect.raster and cond.area to all sp.dist files
   sfInit(parallel = sf.on, cpus = cores, type = 'SOCK')
-  sfExportAll()
+  sfExport('sp.dir','sp.files','rcompose','bgd','intersect.raster','nat.now',
+           'nat.bau','cond.area')
   sfLibrary(raster)
   # sp. potential area maps today
   pot.maps = sfLapply(paste0(sp.dir,sp.files),rcompose,bgd)
@@ -68,12 +71,13 @@ hab.calc = function(sp.filenames, nat.now, nat.bau, binary.px=T,
   maps.list = c(pot.maps,hab.maps,bau.maps)
   # List of the areas (in ha) corresponding to the list of maps above
   pot.areas = sfLapply(pot.maps,function(x){cond.area(nat.now,x)})
-  hab.areas = ifelse(binary.px,
-                     sfLapply(hab.maps,function(x){cond.area(nat.now,x)}),
-                     sfLapply(hab.maps,function(x){sum(values(x),na.rm=T)}) )
-  bau.areas = ifelse(binary.px,
-                     sfLapply(bau.maps,function(x){cond.area(nat.bau,x)}),
-                     sfLapply(bau.maps,function(x){sum(values(x),na.rm=T)}) )
+  if (binary.px){
+    hab.areas = sfLapply(hab.maps,function(x){cond.area(nat.now,x)})
+    bau.areas = sfLapply(bau.maps,function(x){cond.area(nat.bau,x)})
+  } else {
+    hab.areas = sfLapply(hab.maps,function(x){sum(values(x),na.rm=T)})
+    bau.areas = sfLapply(bau.maps,function(x){sum(values(x),na.rm=T)})
+  }
   sfStop()
   
   # Computing area data.frames
@@ -90,5 +94,8 @@ hab.calc = function(sp.filenames, nat.now, nat.bau, binary.px=T,
   # Outputting area data.frames
   write.csv(res.df, file=CSV.name)
   
-  return(list('data'=res.df, 'maps'=maps.list))
+  # Packing results
+  if (area.only) {res=res.df} else {res=list('data'=res.df, 'maps'=maps.list)}
+  
+  return(res)
 }

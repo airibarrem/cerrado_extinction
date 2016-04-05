@@ -1,7 +1,7 @@
 #rm(list=ls())
 require(raster)
 require(snowfall)
-source('~/IIS_PROJECTS/cerrado_extinction/cerrado_fun.R')
+source('./cerrado_fun.R')
 
 # Getting the list of names of all sp.dist files to be included
 sp.dir = './Sp_maps/Flora_Cerrado/'
@@ -55,7 +55,7 @@ nat.bau = (nat.bau * 1000) * ((area(bgd) * 100) / size.map)
 
 flora.hab = hab.calc(sp.files, nat.now, nat.bau, binary.px=F,
                      sp.dir=sp.dir, string.rem='.asc', CSV.name = 'Flora_BRABIOM',
-                     print.CSV=T, sf.on=T, cores=3)
+                     print.CSV=T, sf.on=T, cores=11)
 
 
 # Applying intersect.raster and cond.area to all sp.dist files
