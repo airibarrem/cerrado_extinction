@@ -3,7 +3,7 @@ require(raster)
 require(snowfall)
 source('./cerrado_fun.R')
 
-ext.data = read.csv('./Flora_soaresfilhox.csv')[,2:6]
+#ext.data = read.csv('./Flora_soaresfilhox.csv')[,2:6]
 
 # Getting the list of names of all sp.dist files to be included
 flora.dir = './Sp_maps/Flora_Cerrado/'
@@ -37,38 +37,40 @@ spplot(stack(OA.nat.now,OA.nat.bau,OA.nat.now-OA.nat.bau), names.attr=c(2010,205
        col.regions=rainbow(18,start=0.1, end=0.3))
 dev.off()
 
-hab.run = hab.calc(flora.files, OA.nat.now, OA.nat.bau, binary.px=T,
-                   sp.dir=flora.dir, string.rem='.asc', filename='Flora_Otimizagro'
-                   area.only=F, print.CSV=T, sf.on=T, cores=3)
+hab.run = hab.calc(flora.files, OA.nat.now, OA.nat.bau, bgd=bgd, binary.px=T,
+                   sp.dir=flora.dir, string.rem='.asc', CSV.name='Flora_Otimizagro',
+                   area.only=F, print.CSV=T, sf.on=T, cores=11)
 
-pot.maps = unlist(hab.run[[2]][1:length(ext.data[,5])])
-hab.maps = unlist(hab.run[[2]][(length(ext.data[,5])+1):(2*length(ext.data[,5]))])
-bau.maps = unlist(hab.run[[2]][(2*length(ext.data[,5])+1):(3*length(ext.data[,5]))])
+ext.data = 1 - (hab.run[[1]]$BAU_Area/hab.run[[1]]$Pot_Area)^0.2
+
+pot.maps = unlist(hab.run[[2]][1:length(ext.data)])
+hab.maps = unlist(hab.run[[2]][(length(ext.data)+1):(2*length(ext.data))])
+bau.maps = unlist(hab.run[[2]][(2*length(ext.data)+1):(3*length(ext.data))])
 
 ext.pot.maps = pot.maps
 ext.hab.maps = hab.maps
 ext.bau.maps = bau.maps
 
-for (i in 1:length(ext.data[,5])) {ext.pot.maps[[i]] = ext.data[i,5] * pot.maps[[i]]}
-for (i in 1:length(ext.data[,5])) {ext.hab.maps[[i]] = ext.data[i,5] * hab.maps[[i]]}
-for (i in 1:length(ext.data[,5])) {ext.bau.maps[[i]] = ext.data[i,5] * bau.maps[[i]]}
+for (i in 1:length(ext.data)) {ext.pot.maps[[i]] = ext.data[i] * pot.maps[[i]]}
+for (i in 1:length(ext.data)) {ext.hab.maps[[i]] = ext.data[i] * hab.maps[[i]]}
+for (i in 1:length(ext.data)) {ext.bau.maps[[i]] = ext.data[i] * bau.maps[[i]]}
 
 rich.pot = Reduce('+',pot.maps)
 rich.hab = Reduce('+',hab.maps)
 rich.bau = Reduce('+',bau.maps)
 
-writeRaster(rich.pot, filename='richness.pot.tif',overwrite=T)
-writeRaster(rich.hab, filename='richness.hab.tif',overwrite=T)
-writeRaster(rich.bau, filename='richness.bau.tif',overwrite=T)
+writeRaster(rich.pot, filename='rich_pot.asc',overwrite=T)
+writeRaster(rich.hab, filename='rich_hab.asc',overwrite=T)
+writeRaster(rich.bau, filename='rich_bau.asc',overwrite=T)
 
 
 final.pot.map = Reduce('+',ext.pot.maps)
 final.hab.map = Reduce('+',ext.hab.maps)
 final.bau.map = Reduce('+',ext.bau.maps)
 
-writeRaster(final.pot.map, filename='final.pot.map.tif',overwrite=T)
-writeRaster(final.hab.map, filename='final.hab.map.tif',overwrite=T)
-writeRaster(final.bau.map, filename='final.bau.map.tif',overwrite=T)
+writeRaster(final.pot.map, filename='ext_pot.asc',overwrite=T)
+writeRaster(final.hab.map, filename='ext_hab.asc',overwrite=T)
+writeRaster(final.bau.map, filename='ext_bau.asc',overwrite=T)
 
 jpeg("./extinction_map_pot.jpg", res=600, width=9, height=9, unit='cm', pointsize=8)
 spplot(final.pot.map, names.attr='Aggregated extinction probabilities 2050',

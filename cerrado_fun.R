@@ -9,7 +9,7 @@ rcompose = function(x, bgx){
   if (is.character(x)){x = raster(x)}
   # projects input raster into background raster
   if (is.na(crs(x))) {crs(x)=crs(bgx)}
-  if (crs(x) == crs(bgx)) {x=resample(x,bgx,method='ngb')} else {x=projectRaster(x,bgx,method='ngb')}
+  if (grepl(crs(x),crs(bgx))) {x=resample(x,bgx,method='ngb')} else {x=projectRaster(x,bgx,method='ngb')}
   # remove NA values from input raster
   x[is.na(x)]=0
   # mask input raster using the background one
@@ -40,7 +40,7 @@ intersect.raster = function(x, y, bgx){
   return(rcompose(x*y,bgx))}
 
 # Computes habitat rasters and area (in ha)
-hab.calc = function(sp.filenames, nat.now, nat.bau, binary.px=T, area.only=F,
+hab.calc = function(sp.filenames, nat.now, nat.bau, bgd, binary.px=T, area.only=F,
                     sp.dir=getwd(), string.rem='.asc', CSV.name = 'hab_areas',
                     print.CSV=T, sf.on=T, cores=11){
   # INPUTS:
@@ -88,6 +88,8 @@ hab.calc = function(sp.filenames, nat.now, nat.bau, binary.px=T, area.only=F,
   
   res.df$Hab_perc = res.df$Hab_Area / res.df$Pot_Area
   res.df$BAU_perc = res.df$BAU_Area / res.df$Pot_Area
+  
+  res.df$Ext_Prob = 1 - (res.df$BAU_perc^0.2)
   
   res.df = res.df[order(res.df$Sp),]
   
