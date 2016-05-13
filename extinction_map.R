@@ -38,8 +38,8 @@ spplot(stack(OA.nat.now,OA.nat.bau,OA.nat.now-OA.nat.bau), names.attr=c(2010,205
 dev.off()
 
 hab.run = hab.calc(flora.files, OA.nat.now, OA.nat.bau, binary.px=T,
-                   sp.dir=flora.dir, string.rem='.asc', filename='Flora_Otimizagro'
-                   area.only=F, print.CSV=T, sf.on=T, cores=3)
+                   sp.dir=flora.dir, string.rem='.asc', CSV.name='Flora_Otimizagro',
+                   area.only=F, print.CSV=T, sf.on=T, cores=7)
 
 pot.maps = unlist(hab.run[[2]][1:length(ext.data[,5])])
 hab.maps = unlist(hab.run[[2]][(length(ext.data[,5])+1):(2*length(ext.data[,5]))])
